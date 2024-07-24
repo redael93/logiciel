@@ -3,272 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prendre des commandes</title>
+    <title>Test d'impression</title>
     <style>
-        .section {
-            display: none;
-        }
-        .visible {
-            display: block;
-        }
-        .validate-button {
-            font-weight: bold;
-            color: white;
-            background-color: green;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .delete-button {
-            color: white;
-            background-color: red;
-            border: none;
-            padding: 2px 5px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-        .indented {
-            margin-left: 20px;
+        button {
+            margin: 5px;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Prendre des commandes</h1>
-
-    <!-- Section Bip -->
-    <div id="bipSection" class="section visible">
-        <h2>Sélection du Bip</h2>
-        <label for="bip">Entrez le numéro du Bip :</label>
-        <input type="number" id="bip" name="bip" required>
-        <button onclick="goToSection('typeSection')">Suivant</button>
-    </div>
-
-    <!-- Section Type de Produit -->
-    <div id="typeSection" class="section">
-        <h2>Choix du Type de Produit</h2>
-        <button onclick="showPizzaOptions()">Pizza</button>
-        <button onclick="goToSection('boissonSection')">Boisson</button>
-        <button onclick="goToSection('dessertSection')">Dessert</button>
-    </div>
-
-    <!-- Section Choix de Pizza -->
-    <div id="pizzaSection" class="section">
-        <h2>Choix de la Pizza</h2>
-        <button onclick="selectPizza('Indienne')">Indienne</button>
-        <button onclick="selectPizza('Kebab')">Kebab</button>
-        <button onclick="selectPizza('Française')">Française</button>
-        <button onclick="selectPizza('Chèvre Miel')">Chèvre Miel</button>
-    </div>
-
-    <!-- Section Modification Ingrédients -->
-    <div id="ingredientSection" class="section">
-        <h2>Modification des Ingrédients</h2>
-        <div>
-            <h3>Ajouter Ingrédients</h3>
-            <button onclick="modifyIngredient('Ajouter', 'Sauce Tomate')">Sauce Tomate (+0,50€)</button>
-            <button onclick="modifyIngredient('Ajouter', 'Crème Fraîche')">Crème Fraîche (+0,50€)</button>
-            <button onclick="modifyIngredient('Ajouter', 'Lardons')">Lardons (+0,50€)</button>
-            <button onclick="modifyIngredient('Ajouter', 'Poivrons')">Poivrons (+0,50€)</button>
-        </div>
-        <div>
-            <h3>Supprimer Ingrédients</h3>
-            <button onclick="modifyIngredient('Supprimer', 'Sauce Tomate')">Sauce Tomate</button>
-            <button onclick="modifyIngredient('Supprimer', 'Crème Fraîche')">Crème Fraîche</button>
-            <button onclick="modifyIngredient('Supprimer', 'Lardons')">Lardons</button>
-            <button onclick="modifyIngredient('Supprimer', 'Poivrons')">Poivrons</button>
-        </div>
-        <div>
-            <h3>Remplacer Ingrédients</h3>
-            <button onclick="modifyIngredient('Remplacer', 'Sauce Tomate')">Sauce Tomate</button>
-            <button onclick="modifyIngredient('Remplacer', 'Crème Fraîche')">Crème Fraîche</button>
-            <button onclick="modifyIngredient('Remplacer', 'Lardons')">Lardons</button>
-            <button onclick="modifyIngredient('Remplacer', 'Poivrons')">Poivrons</button>
-        </div>
-        <button class="validate-button" onclick="validateSelection()">Valider</button>
-    </div>
-
-    <!-- Section Boisson -->
-    <div id="boissonSection" class="section">
-        <h2>Choix de la Boisson</h2>
-        <button onclick="addBoisson('Coca')">Coca (1€)</button>
-        <button onclick="addBoisson('Fanta')">Fanta (1€)</button>
-        <button onclick="addBoisson('Évian')">Évian (1€)</button>
-        <button class="validate-button" onclick="validateSelection()">Valider</button>
-    </div>
-
-    <!-- Section Dessert -->
-    <div id="dessertSection" class="section">
-        <h2>Choix du Dessert</h2>
-        <button onclick="addDessert('Tiramisu')">Tiramisu (2€)</button>
-        <button onclick="addDessert('Tarte aux Daims')">Tarte aux Daims (2€)</button>
-        <button class="validate-button" onclick="validateSelection()">Valider</button>
-    </div>
-
-    <!-- Section Commande en cours -->
-    <h2>Commande en cours</h2>
-    <ul id="orderList"></ul>
-    <p id="totalAmount">Montant total de la commande : 0€</p>
-    <button onclick="nextOrder()">Passer à la commande suivante</button>
-    <button onclick="closeOrder()">Clôturer le compte</button>
-
-    <h2>Ticket de commande</h2>
-    <div id="ticket"></div>
+    <h1>Test d'impression avec différents scripts</h1>
+    <button onclick="printNumber(1)">Imprimer 1</button>
+    <button onclick="printNumber(2)">Imprimer 2</button>
+    <button onclick="printNumber(3)">Imprimer 3</button>
+    <button onclick="printNumber(4)">Imprimer 4</button>
+    <button onclick="printNumber(5)">Imprimer 5</button>
+    <button onclick="printNumber(6)">Imprimer 6</button>
+    <button onclick="printNumber(7)">Imprimer 7</button>
+    <button onclick="printNumber(8)">Imprimer 8</button>
+    <button onclick="printNumber(9)">Imprimer 9</button>
+    <button onclick="printNumber(10)">Imprimer 10</button>
 
     <script>
-        let orderCount = 1;
-        let currentOrderAmount = 0;
-        let totalAmount = 0;
-        let orders = [];
-        let currentPizza = '';
-        let currentOrderItems = [];
+        function printNumber(number) {
+            const printArea = document.createElement('div');
+            printArea.innerHTML = `<h1>${number}</h1>`;
+            document.body.appendChild(printArea);
 
-        function goToSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('visible');
-            });
-            document.getElementById(sectionId).classList.add('visible');
-        }
-
-        function showPizzaOptions() {
-            goToSection('pizzaSection');
-        }
-
-        function selectPizza(pizza) {
-            currentPizza = `Pizza: ${pizza} (3€)`;
-            let listItem = document.createElement('li');
-            listItem.innerHTML = `${currentPizza} <button class="delete-button" onclick="removeItem(this, 3)">Supprimer</button>`;
-            currentOrderAmount += 3;
-            orderList.appendChild(listItem);
-            currentOrderItems.push({ item: currentPizza, modifications: [] });
-            goToSection('ingredientSection');
-            updateTotalAmount();
-        }
-
-        function modifyIngredient(action, ingredient) {
-            let modification = `${action === 'Ajouter' ? '+' : action === 'Supprimer' ? '-' : ''} ${ingredient}`;
-            if (action === 'Ajouter') {
-                currentOrderAmount += 0.5;
-            }
-            let listItem = document.createElement('li');
-            listItem.className = 'indented';
-            listItem.innerHTML = `${modification} <button class="delete-button" onclick="removeItem(this, ${action === 'Ajouter' ? 0.5 : 0})">Supprimer</button>`;
-            orderList.appendChild(listItem);
-
-            // Add modification to the current pizza in the current order
-            currentOrderItems[currentOrderItems.length - 1].modifications.push(modification);
-            updateTotalAmount();
-        }
-
-        function validateSelection() {
-            goToSection('typeSection');
-        }
-
-        function addBoisson(boisson) {
-            let listItem = document.createElement('li');
-            listItem.innerHTML = `Boisson: ${boisson} (1€) <button class="delete-button" onclick="removeItem(this, 1)">Supprimer</button>`;
-            currentOrderAmount += 1;
-            orderList.appendChild(listItem);
-            currentOrderItems.push({ item: `Boisson: ${boisson} (1€)` });
-            updateTotalAmount();
-        }
-
-        function addDessert(dessert) {
-            let listItem = document.createElement('li');
-            listItem.innerHTML = `Dessert: ${dessert} (2€) <button class="delete-button" onclick="removeItem(this, 2)">Supprimer</button>`;
-            currentOrderAmount += 2;
-            orderList.appendChild(listItem);
-            currentOrderItems.push({ item: `Dessert: ${dessert} (2€)` });
-            updateTotalAmount();
-        }
-
-        function removeItem(button, amount) {
-            let listItem = button.parentElement;
-            currentOrderAmount -= amount;
-            listItem.remove();
-            updateTotalAmount();
-        }
-
-        function updateTotalAmount() {
-            document.getElementById('totalAmount').textContent = `Montant total de la commande : ${currentOrderAmount}€`;
-        }
-
-        function nextOrder() {
-            let bipNumber = document.getElementById('bip').value;
-            orders.push({
-                number: orderCount,
-                bip: bipNumber,
-                items: currentOrderItems,
-                amount: currentOrderAmount
-            });
-
-            displayTicket(orderCount, bipNumber, currentOrderItems, currentOrderAmount);
-
-            orderCount++;
-            currentOrderAmount = 0;
-            currentOrderItems = [];
-            currentPizza = '';
-            orderList.innerHTML = '';
-            updateTotalAmount();
-            goToSection('bipSection');
-        }
-
-        function closeOrder() {
-            let finalOrderSummary = '';
-            totalAmount = orders.reduce((sum, order) => sum + order.amount, 0);
-            finalOrderSummary += `Montant total de toutes les commandes : ${totalAmount}€`;
-
-            alert(finalOrderSummary);
-            orders = [];
-            totalAmount = 0;
-            orderCount = 1;
-            currentOrderAmount = 0;
-            currentOrderItems = [];
-            orderList.innerHTML = '';
-            document.getElementById('ticket').innerHTML = '';
-            updateTotalAmount();
-            goToSection('bipSection');
-        }
-
-        function displayTicket(orderNumber, bipNumber, items, amount) {
-            let ticket = document.getElementById('ticket');
-            let ticketContent = `<div><strong>Commande n°${orderNumber}</strong><br>Bip: ${bipNumber}<br>`;
-            
-            let pizzas = items.filter(item => item.item.includes('Pizza'));
-            let boissons = items.filter(item => item.item.includes('Boisson'));
-            let desserts = items.filter(item => item.item.includes('Dessert'));
-
-            ticketContent += `<strong>Pizzas: ${pizzas.length}</strong><br>`;
-            pizzas.forEach(pizza => {
-                ticketContent += pizza.item + '<br>';
-                pizza.modifications.forEach(mod => {
-                    ticketContent += '   ' + mod + '<br>';
-                });
-            });
-
-            ticketContent += `<strong>Boissons: ${boissons.length}</strong><br>`;
-            boissons.forEach(boisson => {
-                ticketContent += boisson.item + '<br>';
-            });
-
-            ticketContent += `<strong>Desserts: ${desserts.length}</strong><br>`;
-            desserts.forEach(dessert => {
-                ticketContent += dessert.item + '<br>';
-            });
-
-            ticketContent += `<strong>Total de la commande: ${amount}€</strong><br>`;
-            ticketContent += `<button onclick="printTicket(${orderNumber})">Imprimer</button><hr>`;
-
-            ticket.innerHTML += ticketContent;
-        }
-
-        function printTicket(orderNumber) {
-            let ticketContent = document.querySelector(`#ticket div:nth-child(${orderNumber})`).innerHTML;
-            let printWindow = window.open('', '', 'height=400,width=600');
-            printWindow.document.write('<html><head><title>Ticket de Commande</title></head><body >');
-            printWindow.document.write(ticketContent);
+            const printWindow = window.open('', '_blank', 'width=600,height=400');
+            printWindow.document.write('<html><head><title>Print</title>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(printArea.innerHTML);
             printWindow.document.write('</body></html>');
             printWindow.document.close();
             printWindow.print();
+
+            document.body.removeChild(printArea);
         }
     </script>
 </body>
