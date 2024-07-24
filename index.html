@@ -4,91 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prendre des commandes</title>
+    <style>
+        .section {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <h1>Prendre des commandes</h1>
 
-    <form id="orderForm">
-        <h2>Sélectionnez votre Bip</h2>
-        <label><input type="radio" name="bip" value="1" required> Bip 1</label><br>
-        <label><input type="radio" name="bip" value="2" required> Bip 2</label><br>
-        <label><input type="radio" name="bip" value="3" required> Bip 3</label><br>
-        <label><input type="radio" name="bip" value="4" required> Bip 4</label><br>
+    <!-- Section Bip -->
+    <div id="bipSection" class="section visible">
+        <h2>Sélection du Bip</h2>
+        <label for="bip">Entrez le numéro du Bip :</label>
+        <input type="number" id="bip" name="bip" required>
+        <button onclick="goToSection('typeSection')">Suivant</button>
+    </div>
 
-        <h2>Choisissez vos Pizzas</h2>
-        <label><input type="checkbox" name="pizza" value="Indienne"> Indienne</label><br>
-        <label><input type="checkbox" name="pizza" value="Kebab"> Kebab</label><br>
-        <label><input type="checkbox" name="pizza" value="Française"> Française</label><br>
-        <label><input type="checkbox" name="pizza" value="Chèvre Miel"> Chèvre Miel</label><br>
+    <!-- Section Type de Produit -->
+    <div id="typeSection" class="section">
+        <h2>Choix du Type de Produit</h2>
+        <button onclick="showPizzaOptions()">Pizza</button>
+        <button onclick="goToSection('boissonSection')">Boisson</button>
+        <button onclick="goToSection('dessertSection')">Dessert</button>
+    </div>
 
-        <h3>Modifications des Ingrédients</h3>
-        <label><input type="checkbox" name="ingredient" value="Sauce Tomate"> Sauce Tomate</label><br>
-        <label><input type="checkbox" name="ingredient" value="Crème Fraîche"> Crème Fraîche</label><br>
-        <label><input type="checkbox" name="ingredient" value="Lardons"> Lardons</label><br>
-        <label><input type="checkbox" name="ingredient" value="Poivrons"> Poivrons</label><br>
+    <!-- Section Choix de Pizza -->
+    <div id="pizzaSection" class="section">
+        <h2>Choix de la Pizza</h2>
+        <button onclick="selectPizza('Indienne')">Indienne</button>
+        <button onclick="selectPizza('Kebab')">Kebab</button>
+        <button onclick="selectPizza('Française')">Française</button>
+        <button onclick="selectPizza('Chèvre Miel')">Chèvre Miel</button>
+    </div>
 
-        <h2>Choisissez vos Desserts</h2>
-        <label><input type="checkbox" name="dessert" value="Tiramisu"> Tiramisu</label><br>
-        <label><input type="checkbox" name="dessert" value="Tarte aux Daims"> Tarte aux Daims</label><br>
+    <!-- Section Modification Ingrédients -->
+    <div id="ingredientSection" class="section">
+        <h2>Modification des Ingrédients</h2>
+        <button onclick="modifyIngredient('Ajouter')">Ajouter Ingrédients</button>
+        <button onclick="modifyIngredient('Supprimer')">Supprimer Ingrédients</button>
+        <button onclick="modifyIngredient('Remplacer')">Remplacer Ingrédients</button>
+        <button onclick="validatePizza()">Valider</button>
+    </div>
 
-        <h2>Choisissez vos Boissons</h2>
+    <!-- Section Boisson -->
+    <div id="boissonSection" class="section">
+        <h2>Choix de la Boisson</h2>
         <label><input type="checkbox" name="boisson" value="Coca"> Coca</label><br>
         <label><input type="checkbox" name="boisson" value="Fanta"> Fanta</label><br>
         <label><input type="checkbox" name="boisson" value="Évian"> Évian</label><br>
+        <button onclick="addBoisson()">Ajouter Boisson</button>
+    </div>
 
-        <button type="button" onclick="addOrder()">Ajouter à la commande</button>
-        <button type="button" onclick="closeOrder()">Clôturer le compte</button>
-    </form>
+    <!-- Section Dessert -->
+    <div id="dessertSection" class="section">
+        <h2>Choix du Dessert</h2>
+        <label><input type="checkbox" name="dessert" value="Tiramisu"> Tiramisu</label><br>
+        <label><input type="checkbox" name="dessert" value="Tarte aux Daims"> Tarte aux Daims</label><br>
+        <button onclick="addDessert()">Ajouter Dessert</button>
+    </div>
 
+    <!-- Section Commande en cours -->
     <h2>Commande en cours</h2>
     <ul id="orderList"></ul>
-    <p id="totalAmount"></p>
+    <p id="totalAmount">Montant total de la commande : 0€</p>
+    <button onclick="closeOrder()">Clôturer le compte</button>
 
     <script>
-        let orderCount = 1;
         let totalAmount = 0;
+        let orderList = document.getElementById('orderList');
 
-        function addOrder() {
-            const form = document.getElementById('orderForm');
-            const orderList = document.getElementById('orderList');
-            const formData = new FormData(form);
-            let orderSummary = `Commande ${orderCount}:<br>`;
-            let orderAmount = 0;
-
-            formData.forEach((value, key) => {
-                if (key === 'pizza') {
-                    orderAmount += 3;
-                    orderSummary += `Pizza: ${value} (3€)<br>`;
-                }
-                if (key === 'dessert') {
-                    orderAmount += 2;
-                    orderSummary += `Dessert: ${value} (2€)<br>`;
-                }
-                if (key === 'boisson') {
-                    orderAmount += 1;
-                    orderSummary += `Boisson: ${value} (1€)<br>`;
-                }
-                if (key === 'ingredient') {
-                    orderSummary += `Ingrédient: ${value}<br>`;
-                }
+        function goToSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('visible');
             });
+            document.getElementById(sectionId).classList.add('visible');
+        }
 
-            totalAmount += orderAmount;
-            const listItem = document.createElement('li');
-            listItem.innerHTML = orderSummary + `Total de cette commande: ${orderAmount}€`;
+        function showPizzaOptions() {
+            goToSection('pizzaSection');
+        }
+
+        function selectPizza(pizza) {
+            let listItem = document.createElement('li');
+            listItem.textContent = `Pizza: ${pizza} (3€)`;
             orderList.appendChild(listItem);
-            document.getElementById('totalAmount').innerText = `Montant total de toutes les commandes: ${totalAmount}€`;
+            totalAmount += 3;
+            updateTotalAmount();
+            goToSection('ingredientSection');
+        }
 
-            form.reset();
-            orderCount++;
+        function modifyIngredient(action) {
+            let ingredients = prompt(`Entrez les ingrédients à ${action.toLowerCase()}:`);
+            let listItem = document.createElement('li');
+            listItem.textContent = `${action} ingrédients: ${ingredients}`;
+            orderList.appendChild(listItem);
+        }
+
+        function validatePizza() {
+            goToSection('typeSection');
+        }
+
+        function addBoisson() {
+            document.querySelectorAll('input[name="boisson"]:checked').forEach(boisson => {
+                let listItem = document.createElement('li');
+                listItem.textContent = `Boisson: ${boisson.value} (1€)`;
+                orderList.appendChild(listItem);
+                totalAmount += 1;
+            });
+            updateTotalAmount();
+        }
+
+        function addDessert() {
+            document.querySelectorAll('input[name="dessert"]:checked').forEach(dessert => {
+                let listItem = document.createElement('li');
+                listItem.textContent = `Dessert: ${dessert.value} (2€)`;
+                orderList.appendChild(listItem);
+                totalAmount += 2;
+            });
+            updateTotalAmount();
+        }
+
+        function updateTotalAmount() {
+            document.getElementById('totalAmount').textContent = `Montant total de la commande : ${totalAmount}€`;
         }
 
         function closeOrder() {
-            alert(`Montant total de toutes les commandes: ${totalAmount}€`);
-            document.getElementById('orderList').innerHTML = '';
-            document.getElementById('totalAmount').innerText = '';
+            alert(`Montant total de toutes les commandes : ${totalAmount}€`);
+            orderList.innerHTML = '';
             totalAmount = 0;
-            orderCount = 1;
+            updateTotalAmount();
+            goToSection('bipSection');
         }
     </script>
 </body>
