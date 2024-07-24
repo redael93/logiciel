@@ -104,7 +104,8 @@
         let currentOrderAmount = 0;
         let totalAmount = 0;
         let orders = [];
-        let bipNumber = '';
+        let currentPizza = '';
+        let currentOrderItems = [];
 
         function goToSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
@@ -118,25 +119,28 @@
         }
 
         function selectPizza(pizza) {
+            currentPizza = `Pizza: ${pizza} (3€)`;
             let listItem = document.createElement('li');
-            listItem.textContent = `Pizza: ${pizza} (3€)`;
+            listItem.textContent = currentPizza;
             currentOrderAmount += 3;
             orderList.appendChild(listItem);
+            currentOrderItems.push({ item: currentPizza, modifications: [] });
             goToSection('ingredientSection');
             updateTotalAmount();
         }
 
         function modifyIngredient(action, ingredient) {
-            let listItem = document.createElement('li');
+            let modification = `${action === 'Ajouter' ? '+' : action === 'Supprimer' ? '-' : ''} ${ingredient}`;
             if (action === 'Ajouter') {
-                listItem.textContent = `${action}: ${ingredient} (+0,50€)`;
                 currentOrderAmount += 0.5;
-            } else if (action === 'Supprimer') {
-                listItem.textContent = `${action}: ${ingredient} (-)`;
-            } else {
-                listItem.textContent = `${action}: ${ingredient}`;
             }
+            let listItem = document.createElement('li');
+            listItem.style.marginLeft = '20px';
+            listItem.textContent = modification;
             orderList.appendChild(listItem);
+
+            // Add modification to the current pizza in the current order
+            currentOrderItems[currentOrderItems.length - 1].modifications.push(modification);
             updateTotalAmount();
         }
 
@@ -149,6 +153,7 @@
             listItem.textContent = `Boisson: ${boisson} (1€)`;
             currentOrderAmount += 1;
             orderList.appendChild(listItem);
+            currentOrderItems.push({ item: `Boisson: ${boisson} (1€)` });
             updateTotalAmount();
         }
 
@@ -157,6 +162,7 @@
             listItem.textContent = `Dessert: ${dessert} (2€)`;
             currentOrderAmount += 2;
             orderList.appendChild(listItem);
+            currentOrderItems.push({ item: `Dessert: ${dessert} (2€)` });
             updateTotalAmount();
         }
 
@@ -165,19 +171,20 @@
         }
 
         function nextOrder() {
-            bipNumber = document.getElementById('bip').value;
-            let orderItems = Array.from(orderList.children).map(item => item.textContent);
+            let bipNumber = document.getElementById('bip').value;
             orders.push({
                 number: orderCount,
                 bip: bipNumber,
-                items: orderItems,
+                items: currentOrderItems,
                 amount: currentOrderAmount
             });
 
-            displayTicket(orderCount, bipNumber, orderItems, currentOrderAmount);
+            displayTicket(orderCount, bipNumber, currentOrderItems, currentOrderAmount);
 
             orderCount++;
             currentOrderAmount = 0;
+            currentOrderItems = [];
+            currentPizza = '';
             orderList.innerHTML = '';
             updateTotalAmount();
             goToSection('bipSection');
@@ -193,6 +200,7 @@
             totalAmount = 0;
             orderCount = 1;
             currentOrderAmount = 0;
+            currentOrderItems = [];
             orderList.innerHTML = '';
             document.getElementById('ticket').innerHTML = '';
             updateTotalAmount();
@@ -203,15 +211,28 @@
             let ticket = document.getElementById('ticket');
             let ticketContent = `<div><strong>Commande n°${orderNumber}</strong><br>Bip: ${bipNumber}<br>`;
             
-            let pizzas = items.filter(item => item.includes('Pizza'));
-            let boissons = items.filter(item => item.includes('Boisson'));
-            let desserts = items.filter(item => item.includes('Dessert'));
-            let ingredients = items.filter(item => item.includes('Ajouter') || item.includes('Supprimer') || item.includes('Remplacer'));
+            let pizzas = items.filter(item => item.item.includes('Pizza'));
+            let boissons = items.filter(item => item.item.includes('Boisson'));
+            let desserts = items.filter(item => item.item.includes('Dessert'));
 
-            ticketContent += '<strong>Pizzas:</strong><br>' + pizzas.join('<br>') + '<br>';
-            ticketContent += '<strong>Boissons:</strong><br>' + boissons.join('<br>') + '<br>';
-            ticketContent += '<strong>Desserts:</strong><br>' + desserts.join('<br>') + '<br>';
-            ticketContent += '<strong>Ingrédients:</strong><br>' + ingredients.join('<br>') + '<br>';
+            ticketContent += '<strong>Pizzas:</strong><br>';
+            pizzas.forEach(pizza => {
+                ticketContent += pizza.item + '<br>';
+                pizza.modifications.forEach(mod => {
+                    ticketContent += '   ' + mod + '<br>';
+                });
+            });
+
+            ticketContent += '<strong>Boissons:</strong><br>';
+            boissons.forEach(boisson => {
+                ticketContent += boisson.item + '<br>';
+            });
+
+            ticketContent += '<strong>Desserts:</strong><br>';
+            desserts.forEach(dessert => {
+                ticketContent += dessert.item + '<br>';
+            });
+
             ticketContent += `<strong>Total de la commande: ${amount}€</strong><br></div><hr>`;
 
             ticket.innerHTML += ticketContent;
