@@ -44,27 +44,45 @@
     <!-- Section Modification Ingrédients -->
     <div id="ingredientSection" class="section">
         <h2>Modification des Ingrédients</h2>
-        <button onclick="modifyIngredient('Ajouter')">Ajouter Ingrédients</button>
-        <button onclick="modifyIngredient('Supprimer')">Supprimer Ingrédients</button>
-        <button onclick="modifyIngredient('Remplacer')">Remplacer Ingrédients</button>
-        <button onclick="validatePizza()">Valider</button>
+        <div>
+            <h3>Ajouter Ingrédients</h3>
+            <button onclick="modifyIngredient('Ajouter', 'Sauce Tomate')">Sauce Tomate (+0,50€)</button>
+            <button onclick="modifyIngredient('Ajouter', 'Crème Fraîche')">Crème Fraîche (+0,50€)</button>
+            <button onclick="modifyIngredient('Ajouter', 'Lardons')">Lardons (+0,50€)</button>
+            <button onclick="modifyIngredient('Ajouter', 'Poivrons')">Poivrons (+0,50€)</button>
+        </div>
+        <div>
+            <h3>Supprimer Ingrédients</h3>
+            <button onclick="modifyIngredient('Supprimer', 'Sauce Tomate')">Sauce Tomate</button>
+            <button onclick="modifyIngredient('Supprimer', 'Crème Fraîche')">Crème Fraîche</button>
+            <button onclick="modifyIngredient('Supprimer', 'Lardons')">Lardons</button>
+            <button onclick="modifyIngredient('Supprimer', 'Poivrons')">Poivrons</button>
+        </div>
+        <div>
+            <h3>Remplacer Ingrédients</h3>
+            <button onclick="modifyIngredient('Remplacer', 'Sauce Tomate')">Sauce Tomate</button>
+            <button onclick="modifyIngredient('Remplacer', 'Crème Fraîche')">Crème Fraîche</button>
+            <button onclick="modifyIngredient('Remplacer', 'Lardons')">Lardons</button>
+            <button onclick="modifyIngredient('Remplacer', 'Poivrons')">Poivrons</button>
+        </div>
+        <button onclick="validateSelection()">Valider</button>
     </div>
 
     <!-- Section Boisson -->
     <div id="boissonSection" class="section">
         <h2>Choix de la Boisson</h2>
-        <label><input type="checkbox" name="boisson" value="Coca"> Coca</label><br>
-        <label><input type="checkbox" name="boisson" value="Fanta"> Fanta</label><br>
-        <label><input type="checkbox" name="boisson" value="Évian"> Évian</label><br>
-        <button onclick="addBoisson()">Ajouter Boisson</button>
+        <button onclick="addBoisson('Coca')">Coca (1€)</button>
+        <button onclick="addBoisson('Fanta')">Fanta (1€)</button>
+        <button onclick="addBoisson('Évian')">Évian (1€)</button>
+        <button onclick="validateSelection()">Valider</button>
     </div>
 
     <!-- Section Dessert -->
     <div id="dessertSection" class="section">
         <h2>Choix du Dessert</h2>
-        <label><input type="checkbox" name="dessert" value="Tiramisu"> Tiramisu</label><br>
-        <label><input type="checkbox" name="dessert" value="Tarte aux Daims"> Tarte aux Daims</label><br>
-        <button onclick="addDessert()">Ajouter Dessert</button>
+        <button onclick="addDessert('Tiramisu')">Tiramisu (2€)</button>
+        <button onclick="addDessert('Tarte aux Daims')">Tarte aux Daims (2€)</button>
+        <button onclick="validateSelection()">Valider</button>
     </div>
 
     <!-- Section Commande en cours -->
@@ -97,43 +115,35 @@
             goToSection('ingredientSection');
         }
 
-        function modifyIngredient(action) {
-            let ingredients = ["Sauce Tomate", "Crème Fraîche", "Lardons", "Poivrons"];
-            let selectedIngredient = prompt(`Sélectionnez un ingrédient à ${action.toLowerCase()}:\n${ingredients.join(", ")}`);
-            if (selectedIngredient && ingredients.includes(selectedIngredient)) {
-                let listItem = document.createElement('li');
-                listItem.textContent = `${action} ingrédient: ${selectedIngredient}`;
-                orderList.appendChild(listItem);
-                if (action === 'Ajouter') {
-                    totalAmount += 0.5;
-                }
-                updateTotalAmount();
+        function modifyIngredient(action, ingredient) {
+            let listItem = document.createElement('li');
+            if (action === 'Ajouter') {
+                listItem.textContent = `${action} ingrédient: ${ingredient} (+0,50€)`;
+                totalAmount += 0.5;
             } else {
-                alert("Ingrédient invalide.");
+                listItem.textContent = `${action} ingrédient: ${ingredient}`;
             }
-        }
-
-        function validatePizza() {
-            goToSection('typeSection');
-        }
-
-        function addBoisson() {
-            document.querySelectorAll('input[name="boisson"]:checked').forEach(boisson => {
-                let listItem = document.createElement('li');
-                listItem.textContent = `Boisson: ${boisson.value} (1€)`;
-                orderList.appendChild(listItem);
-                totalAmount += 1;
-            });
+            orderList.appendChild(listItem);
             updateTotalAmount();
         }
 
-        function addDessert() {
-            document.querySelectorAll('input[name="dessert"]:checked').forEach(dessert => {
-                let listItem = document.createElement('li');
-                listItem.textContent = `Dessert: ${dessert.value} (2€)`;
-                orderList.appendChild(listItem);
-                totalAmount += 2;
-            });
+        function validateSelection() {
+            goToSection('typeSection');
+        }
+
+        function addBoisson(boisson) {
+            let listItem = document.createElement('li');
+            listItem.textContent = `Boisson: ${boisson} (1€)`;
+            orderList.appendChild(listItem);
+            totalAmount += 1;
+            updateTotalAmount();
+        }
+
+        function addDessert(dessert) {
+            let listItem = document.createElement('li');
+            listItem.textContent = `Dessert: ${dessert} (2€)`;
+            orderList.appendChild(listItem);
+            totalAmount += 2;
             updateTotalAmount();
         }
 
@@ -151,4 +161,3 @@
     </script>
 </body>
 </html>
-
