@@ -115,6 +115,7 @@
             currentOrderAmount += 3;
             orderList.appendChild(listItem);
             goToSection('ingredientSection');
+            updateTotalAmount();
         }
 
         function modifyIngredient(action, ingredient) {
@@ -128,6 +129,7 @@
                 listItem.textContent = `${action}: ${ingredient}`;
             }
             orderList.appendChild(listItem);
+            updateTotalAmount();
         }
 
         function validateSelection() {
@@ -139,6 +141,7 @@
             listItem.textContent = `Boisson: ${boisson} (1€)`;
             currentOrderAmount += 1;
             orderList.appendChild(listItem);
+            updateTotalAmount();
         }
 
         function addDessert(dessert) {
@@ -146,6 +149,7 @@
             listItem.textContent = `Dessert: ${dessert} (2€)`;
             currentOrderAmount += 2;
             orderList.appendChild(listItem);
+            updateTotalAmount();
         }
 
         function updateTotalAmount() {
@@ -169,23 +173,32 @@
 
         function closeOrder() {
             let finalOrderSummary = '';
+            let allPizzas = [];
+            let allBoissons = [];
+            let allDesserts = [];
+            let allIngredients = [];
 
             orders.forEach(order => {
                 finalOrderSummary += `Commande ${order.number}:\n`;
-                let pizzas = order.items.filter(item => item.includes('Pizza'));
-                let boissons = order.items.filter(item => item.includes('Boisson'));
-                let desserts = order.items.filter(item => item.includes('Dessert'));
-                let ingredients = order.items.filter(item => item.includes('Ajouter') || item.includes('Supprimer') || item.includes('Remplacer'));
-
-                pizzas.forEach(pizza => finalOrderSummary += pizza + '\n');
-                ingredients.forEach(ingredient => finalOrderSummary += ingredient + '\n');
-                boissons.forEach(boisson => finalOrderSummary += boisson + '\n');
-                desserts.forEach(dessert => finalOrderSummary += dessert + '\n');
+                order.items.forEach(item => {
+                    if (item.includes('Pizza')) {
+                        allPizzas.push(item);
+                    } else if (item.includes('Boisson')) {
+                        allBoissons.push(item);
+                    } else if (item.includes('Dessert')) {
+                        allDesserts.push(item);
+                    } else {
+                        allIngredients.push(item);
+                    }
+                });
                 finalOrderSummary += `Total de la commande ${order.number}: ${order.amount}€\n\n`;
-
                 totalAmount += order.amount;
             });
 
+            finalOrderSummary += `Pizzas:\n${allPizzas.join('\n')}\n`;
+            finalOrderSummary += `Boissons:\n${allBoissons.join('\n')}\n`;
+            finalOrderSummary += `Desserts:\n${allDesserts.join('\n')}\n`;
+            finalOrderSummary += `Ingrédients:\n${allIngredients.join('\n')}\n`;
             finalOrderSummary += `Montant total de toutes les commandes : ${totalAmount}€`;
 
             alert(finalOrderSummary);
