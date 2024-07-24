@@ -98,10 +98,19 @@
         }
 
         function modifyIngredient(action) {
-            let ingredients = prompt(`Entrez les ingrédients à ${action.toLowerCase()}:`);
-            let listItem = document.createElement('li');
-            listItem.textContent = `${action} ingrédients: ${ingredients}`;
-            orderList.appendChild(listItem);
+            let ingredients = ["Sauce Tomate", "Crème Fraîche", "Lardons", "Poivrons"];
+            let selectedIngredient = prompt(`Sélectionnez un ingrédient à ${action.toLowerCase()}:\n${ingredients.join(", ")}`);
+            if (selectedIngredient && ingredients.includes(selectedIngredient)) {
+                let listItem = document.createElement('li');
+                listItem.textContent = `${action} ingrédient: ${selectedIngredient}`;
+                orderList.appendChild(listItem);
+                if (action === 'Ajouter') {
+                    totalAmount += 0.5;
+                }
+                updateTotalAmount();
+            } else {
+                alert("Ingrédient invalide.");
+            }
         }
 
         function validatePizza() {
@@ -142,3 +151,4 @@
     </script>
 </body>
 </html>
+
