@@ -237,7 +237,7 @@
             let boissons = items.filter(item => item.item.includes('Boisson'));
             let desserts = items.filter(item => item.item.includes('Dessert'));
 
-            ticketContent += '<strong>Pizzas:</strong><br>';
+            ticketContent += `<strong>Pizzas: ${pizzas.length}</strong><br>`;
             pizzas.forEach(pizza => {
                 ticketContent += pizza.item + '<br>';
                 pizza.modifications.forEach(mod => {
@@ -245,19 +245,30 @@
                 });
             });
 
-            ticketContent += '<strong>Boissons:</strong><br>';
+            ticketContent += `<strong>Boissons: ${boissons.length}</strong><br>`;
             boissons.forEach(boisson => {
                 ticketContent += boisson.item + '<br>';
             });
 
-            ticketContent += '<strong>Desserts:</strong><br>';
+            ticketContent += `<strong>Desserts: ${desserts.length}</strong><br>`;
             desserts.forEach(dessert => {
                 ticketContent += dessert.item + '<br>';
             });
 
-            ticketContent += `<strong>Total de la commande: ${amount}€</strong><br></div><hr>`;
+            ticketContent += `<strong>Total de la commande: ${amount}€</strong><br>`;
+            ticketContent += `<button onclick="printTicket(${orderNumber})">Imprimer</button><hr>`;
 
             ticket.innerHTML += ticketContent;
+        }
+
+        function printTicket(orderNumber) {
+            let ticketContent = document.querySelector(`#ticket div:nth-child(${orderNumber})`).innerHTML;
+            let printWindow = window.open('', '', 'height=400,width=600');
+            printWindow.document.write('<html><head><title>Ticket de Commande</title></head><body >');
+            printWindow.document.write(ticketContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
         }
     </script>
 </body>
