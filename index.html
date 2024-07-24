@@ -89,11 +89,14 @@
     <h2>Commande en cours</h2>
     <ul id="orderList"></ul>
     <p id="totalAmount">Montant total de la commande : 0€</p>
+    <button onclick="nextOrder()">Passer à la commande suivante</button>
     <button onclick="closeOrder()">Clôturer le compte</button>
 
     <script>
+        let orderCount = 1;
+        let currentOrderAmount = 0;
         let totalAmount = 0;
-        let orderList = document.getElementById('orderList');
+        let orders = [];
 
         function goToSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
@@ -109,22 +112,22 @@
         function selectPizza(pizza) {
             let listItem = document.createElement('li');
             listItem.textContent = `Pizza: ${pizza} (3€)`;
+            currentOrderAmount += 3;
             orderList.appendChild(listItem);
-            totalAmount += 3;
-            updateTotalAmount();
             goToSection('ingredientSection');
         }
 
         function modifyIngredient(action, ingredient) {
             let listItem = document.createElement('li');
             if (action === 'Ajouter') {
-                listItem.textContent = `${action} ingrédient: ${ingredient} (+0,50€)`;
-                totalAmount += 0.5;
+                listItem.textContent = `${action}: ${ingredient} (+0,50€)`;
+                currentOrderAmount += 0.5;
+            } else if (action === 'Supprimer') {
+                listItem.textContent = `${action}: ${ingredient} (-)`;
             } else {
-                listItem.textContent = `${action} ingrédient: ${ingredient}`;
+                listItem.textContent = `${action}: ${ingredient}`;
             }
             orderList.appendChild(listItem);
-            updateTotalAmount();
         }
 
         function validateSelection() {
@@ -134,27 +137,63 @@
         function addBoisson(boisson) {
             let listItem = document.createElement('li');
             listItem.textContent = `Boisson: ${boisson} (1€)`;
+            currentOrderAmount += 1;
             orderList.appendChild(listItem);
-            totalAmount += 1;
-            updateTotalAmount();
         }
 
         function addDessert(dessert) {
             let listItem = document.createElement('li');
             listItem.textContent = `Dessert: ${dessert} (2€)`;
+            currentOrderAmount += 2;
             orderList.appendChild(listItem);
-            totalAmount += 2;
-            updateTotalAmount();
         }
 
         function updateTotalAmount() {
-            document.getElementById('totalAmount').textContent = `Montant total de la commande : ${totalAmount}€`;
+            document.getElementById('totalAmount').textContent = `Montant total de la commande : ${currentOrderAmount}€`;
+        }
+
+        function nextOrder() {
+            let orderItems = Array.from(orderList.children).map(item => item.textContent);
+            orders.push({
+                number: orderCount,
+                items: orderItems,
+                amount: currentOrderAmount
+            });
+
+            orderCount++;
+            currentOrderAmount = 0;
+            orderList.innerHTML = '';
+            updateTotalAmount();
+            goToSection('bipSection');
         }
 
         function closeOrder() {
-            alert(`Montant total de toutes les commandes : ${totalAmount}€`);
-            orderList.innerHTML = '';
+            let finalOrderSummary = '';
+
+            orders.forEach(order => {
+                finalOrderSummary += `Commande ${order.number}:\n`;
+                let pizzas = order.items.filter(item => item.includes('Pizza'));
+                let boissons = order.items.filter(item => item.includes('Boisson'));
+                let desserts = order.items.filter(item => item.includes('Dessert'));
+                let ingredients = order.items.filter(item => item.includes('Ajouter') || item.includes('Supprimer') || item.includes('Remplacer'));
+
+                pizzas.forEach(pizza => finalOrderSummary += pizza + '\n');
+                ingredients.forEach(ingredient => finalOrderSummary += ingredient + '\n');
+                boissons.forEach(boisson => finalOrderSummary += boisson + '\n');
+                desserts.forEach(dessert => finalOrderSummary += dessert + '\n');
+                finalOrderSummary += `Total de la commande ${order.number}: ${order.amount}€\n\n`;
+
+                totalAmount += order.amount;
+            });
+
+            finalOrderSummary += `Montant total de toutes les commandes : ${totalAmount}€`;
+
+            alert(finalOrderSummary);
+            orders = [];
             totalAmount = 0;
+            orderCount = 1;
+            currentOrderAmount = 0;
+            orderList.innerHTML = '';
             updateTotalAmount();
             goToSection('bipSection');
         }
