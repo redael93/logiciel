@@ -11,6 +11,10 @@
         .visible {
             display: block;
         }
+        .validate-button {
+            font-weight: bold;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -65,7 +69,7 @@
             <button onclick="modifyIngredient('Remplacer', 'Lardons')">Lardons</button>
             <button onclick="modifyIngredient('Remplacer', 'Poivrons')">Poivrons</button>
         </div>
-        <button onclick="validateSelection()">Valider</button>
+        <button class="validate-button" onclick="validateSelection()">Valider</button>
     </div>
 
     <!-- Section Boisson -->
@@ -74,7 +78,7 @@
         <button onclick="addBoisson('Coca')">Coca (1€)</button>
         <button onclick="addBoisson('Fanta')">Fanta (1€)</button>
         <button onclick="addBoisson('Évian')">Évian (1€)</button>
-        <button onclick="validateSelection()">Valider</button>
+        <button class="validate-button" onclick="validateSelection()">Valider</button>
     </div>
 
     <!-- Section Dessert -->
@@ -82,7 +86,7 @@
         <h2>Choix du Dessert</h2>
         <button onclick="addDessert('Tiramisu')">Tiramisu (2€)</button>
         <button onclick="addDessert('Tarte aux Daims')">Tarte aux Daims (2€)</button>
-        <button onclick="validateSelection()">Valider</button>
+        <button class="validate-button" onclick="validateSelection()">Valider</button>
     </div>
 
     <!-- Section Commande en cours -->
@@ -92,11 +96,15 @@
     <button onclick="nextOrder()">Passer à la commande suivante</button>
     <button onclick="closeOrder()">Clôturer le compte</button>
 
+    <h2>Ticket de commande</h2>
+    <div id="ticket"></div>
+
     <script>
         let orderCount = 1;
         let currentOrderAmount = 0;
         let totalAmount = 0;
         let orders = [];
+        let bipNumber = '';
 
         function goToSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
@@ -157,12 +165,16 @@
         }
 
         function nextOrder() {
+            bipNumber = document.getElementById('bip').value;
             let orderItems = Array.from(orderList.children).map(item => item.textContent);
             orders.push({
                 number: orderCount,
+                bip: bipNumber,
                 items: orderItems,
                 amount: currentOrderAmount
             });
+
+            displayTicket(orderCount, bipNumber, orderItems, currentOrderAmount);
 
             orderCount++;
             currentOrderAmount = 0;
@@ -173,32 +185,7 @@
 
         function closeOrder() {
             let finalOrderSummary = '';
-            let allPizzas = [];
-            let allBoissons = [];
-            let allDesserts = [];
-            let allIngredients = [];
-
-            orders.forEach(order => {
-                finalOrderSummary += `Commande ${order.number}:\n`;
-                order.items.forEach(item => {
-                    if (item.includes('Pizza')) {
-                        allPizzas.push(item);
-                    } else if (item.includes('Boisson')) {
-                        allBoissons.push(item);
-                    } else if (item.includes('Dessert')) {
-                        allDesserts.push(item);
-                    } else {
-                        allIngredients.push(item);
-                    }
-                });
-                finalOrderSummary += `Total de la commande ${order.number}: ${order.amount}€\n\n`;
-                totalAmount += order.amount;
-            });
-
-            finalOrderSummary += `Pizzas:\n${allPizzas.join('\n')}\n`;
-            finalOrderSummary += `Boissons:\n${allBoissons.join('\n')}\n`;
-            finalOrderSummary += `Desserts:\n${allDesserts.join('\n')}\n`;
-            finalOrderSummary += `Ingrédients:\n${allIngredients.join('\n')}\n`;
+            totalAmount = orders.reduce((sum, order) => sum + order.amount, 0);
             finalOrderSummary += `Montant total de toutes les commandes : ${totalAmount}€`;
 
             alert(finalOrderSummary);
@@ -207,8 +194,27 @@
             orderCount = 1;
             currentOrderAmount = 0;
             orderList.innerHTML = '';
+            document.getElementById('ticket').innerHTML = '';
             updateTotalAmount();
             goToSection('bipSection');
+        }
+
+        function displayTicket(orderNumber, bipNumber, items, amount) {
+            let ticket = document.getElementById('ticket');
+            let ticketContent = `<div><strong>Commande n°${orderNumber}</strong><br>Bip: ${bipNumber}<br>`;
+            
+            let pizzas = items.filter(item => item.includes('Pizza'));
+            let boissons = items.filter(item => item.includes('Boisson'));
+            let desserts = items.filter(item => item.includes('Dessert'));
+            let ingredients = items.filter(item => item.includes('Ajouter') || item.includes('Supprimer') || item.includes('Remplacer'));
+
+            ticketContent += '<strong>Pizzas:</strong><br>' + pizzas.join('<br>') + '<br>';
+            ticketContent += '<strong>Boissons:</strong><br>' + boissons.join('<br>') + '<br>';
+            ticketContent += '<strong>Desserts:</strong><br>' + desserts.join('<br>') + '<br>';
+            ticketContent += '<strong>Ingrédients:</strong><br>' + ingredients.join('<br>') + '<br>';
+            ticketContent += `<strong>Total de la commande: ${amount}€</strong><br></div><hr>`;
+
+            ticket.innerHTML += ticketContent;
         }
     </script>
 </body>
