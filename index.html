@@ -13,7 +13,22 @@
         }
         .validate-button {
             font-weight: bold;
-            color: red;
+            color: white;
+            background-color: green;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .delete-button {
+            color: white;
+            background-color: red;
+            border: none;
+            padding: 2px 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .indented {
+            margin-left: 20px;
         }
     </style>
 </head>
@@ -121,7 +136,7 @@
         function selectPizza(pizza) {
             currentPizza = `Pizza: ${pizza} (3€)`;
             let listItem = document.createElement('li');
-            listItem.textContent = currentPizza;
+            listItem.innerHTML = `${currentPizza} <button class="delete-button" onclick="removeItem(this, 3)">Supprimer</button>`;
             currentOrderAmount += 3;
             orderList.appendChild(listItem);
             currentOrderItems.push({ item: currentPizza, modifications: [] });
@@ -135,8 +150,8 @@
                 currentOrderAmount += 0.5;
             }
             let listItem = document.createElement('li');
-            listItem.style.marginLeft = '20px';
-            listItem.textContent = modification;
+            listItem.className = 'indented';
+            listItem.innerHTML = `${modification} <button class="delete-button" onclick="removeItem(this, ${action === 'Ajouter' ? 0.5 : 0})">Supprimer</button>`;
             orderList.appendChild(listItem);
 
             // Add modification to the current pizza in the current order
@@ -150,7 +165,7 @@
 
         function addBoisson(boisson) {
             let listItem = document.createElement('li');
-            listItem.textContent = `Boisson: ${boisson} (1€)`;
+            listItem.innerHTML = `Boisson: ${boisson} (1€) <button class="delete-button" onclick="removeItem(this, 1)">Supprimer</button>`;
             currentOrderAmount += 1;
             orderList.appendChild(listItem);
             currentOrderItems.push({ item: `Boisson: ${boisson} (1€)` });
@@ -159,10 +174,17 @@
 
         function addDessert(dessert) {
             let listItem = document.createElement('li');
-            listItem.textContent = `Dessert: ${dessert} (2€)`;
+            listItem.innerHTML = `Dessert: ${dessert} (2€) <button class="delete-button" onclick="removeItem(this, 2)">Supprimer</button>`;
             currentOrderAmount += 2;
             orderList.appendChild(listItem);
             currentOrderItems.push({ item: `Dessert: ${dessert} (2€)` });
+            updateTotalAmount();
+        }
+
+        function removeItem(button, amount) {
+            let listItem = button.parentElement;
+            currentOrderAmount -= amount;
+            listItem.remove();
             updateTotalAmount();
         }
 
