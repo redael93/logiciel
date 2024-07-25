@@ -155,4 +155,140 @@
         function selectPizza(pizza, price) {
             currentPizza = `Pizza: ${pizza} (${price.toFixed(2)}€)`;
             let listItem = document.createElement('li');
-            listItem.innerHTML = `${currentPizza}
+            listItem.innerHTML = `${currentPizza} <button class="delete-button" onclick="removeItem(this, ${price})">Supprimer</button>`;
+            currentOrderAmount += price;
+            orderList.appendChild(listItem);
+            currentOrderItems.push({ item: currentPizza, modifications: [] });
+            goToSection('ingredientSection');
+            updateTotalAmount();
+        }
+
+        function modifyIngredient(action, ingredient) {
+            let modification = `${action === 'Ajouter' ? '+' : action === 'Supprimer' ? '-' : ''} ${ingredient}`;
+            if (action === 'Ajouter') {
+                currentOrderAmount += 0.5;
+            }
+            let listItem = document.createElement('li');
+            listItem.className = 'indented';
+            listItem.innerHTML = `${modification} <button class="delete-button" onclick="removeItem(this, ${action === 'Ajouter' ? 0.5 : 0})">Supprimer</button>`;
+            orderList.appendChild(listItem);
+
+            // Add modification to the current pizza in the current order
+            currentOrderItems[currentOrderItems.length - 1].modifications.push(modification);
+            updateTotalAmount();
+        }
+
+        function validateSelection() {
+            goToSection('typeSection');
+        }
+
+        function addBoisson(boisson) {
+            let listItem = document.createElement('li');
+            listItem.innerHTML = `Boisson: ${boisson} (1€) <button class="delete-button" onclick="removeItem(this, 1)">Supprimer</button>`;
+            currentOrderAmount += 1;
+            orderList.appendChild(listItem);
+            currentOrderItems.push({ item: `Boisson: ${boisson} (1€)` });
+            updateTotalAmount();
+        }
+
+        function addDessert(dessert) {
+            let listItem = document.createElement('li');
+            listItem.innerHTML = `Dessert: ${dessert} (2€) <button class="delete-button" onclick="removeItem(this, 2)">Supprimer</button>`;
+            currentOrderAmount += 2;
+            orderList.appendChild(listItem);
+            currentOrderItems.push({ item: `Dessert: ${dessert} (2€)` });
+            updateTotalAmount();
+        }
+
+        function removeItem(button, amount) {
+            let listItem = button.parentElement;
+            currentOrderAmount -= amount;
+            listItem.remove();
+            updateTotalAmount();
+        }
+
+        function updateTotalAmount() {
+            document.getElementById('totalAmount').textContent = `Montant total de la commande : ${currentOrderAmount.toFixed(2)}€`;
+        }
+
+        function nextOrder() {
+            let bipNumber = document.getElementById('bip').value;
+            orders.push({
+                number: orderCount,
+                bip: bipNumber,
+                items: currentOrderItems,
+                amount: currentOrderAmount
+            });
+
+            displayTicket(orderCount, bipNumber, currentOrderItems, currentOrderAmount);
+
+            orderCount++;
+            currentOrderAmount = 0;
+            currentOrderItems = [];
+            currentPizza = '';
+            orderList.innerHTML = '';
+            updateTotalAmount();
+            goToSection('bipSection');
+        }
+
+        function closeOrder() {
+            let finalOrderSummary = '';
+            totalAmount = orders.reduce((sum, order) => sum + order.amount, 0);
+            finalOrderSummary += `Montant total de toutes les commandes : ${totalAmount.toFixed(2)}€`;
+
+            alert(finalOrderSummary);
+            orders = [];
+            totalAmount = 0;
+            orderCount = 1;
+            currentOrderAmount = 0;
+            currentOrderItems = [];
+            orderList.innerHTML = '';
+            document.getElementById('ticket').innerHTML = '';
+            updateTotalAmount();
+            goToSection('bipSection');
+        }
+
+        function displayTicket(orderNumber, bipNumber, items, amount) {
+            let ticket = document.getElementById('ticket');
+            let ticketContent = `<div id="ticket-${orderNumber}"><strong>Commande n°${orderNumber}</strong><br>Bip: ${bipNumber}<br>`;
+            
+            let pizzas = items.filter(item => item.item.includes('Pizza'));
+            let boissons = items.filter(item => item.item.includes('Boisson'));
+            let desserts = items.filter(item => item.item.includes('Dessert'));
+
+            ticketContent += `<strong>Pizzas: ${pizzas.length}</strong><br>`;
+            pizzas.forEach(pizza => {
+                ticketContent += pizza.item + '<br>';
+                pizza.modifications.forEach(mod => {
+                    ticketContent += '   ' + mod + '<br>';
+                });
+            });
+
+            ticketContent += `<strong>Boissons: ${boissons.length}</strong><br>`;
+            boissons.forEach(boisson => {
+                ticketContent += boisson.item + '<br>';
+            });
+
+            ticketContent += `<strong>Desserts: ${desserts.length}</strong><br>`;
+            desserts.forEach(dessert => {
+                ticketContent += dessert.item + '<br>';
+            });
+
+            ticketContent += `<strong>Total de la commande: ${amount.toFixed(2)}€</strong><br>`;
+            ticketContent += `<button onclick="printTicket(${orderNumber})">Imprimer</button><hr></div>`;
+
+            ticket.innerHTML += ticketContent;
+        }
+
+        function printTicket(orderNumber) {
+            let ticketContent = document.querySelector(`#ticket-${orderNumber}`).innerHTML;
+            let printWindow = window.open('', '', 'height=400,width=600');
+            printWindow.document.write('<html><head><title>Ticket de Commande</title></head><body>');
+            printWindow.document.write(ticketContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>
